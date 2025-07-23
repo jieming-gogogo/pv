@@ -2,12 +2,11 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
     <title>生物反应器搅拌功率与转速计算器</title>
     
-    <!-- 内嵌所有样式 -->
     <style>
         /* 基础样式 */
         * {
@@ -15,6 +14,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
@@ -23,7 +23,7 @@
             animation: gradientBG 15s ease infinite;
             color: #333;
             min-height: 100vh;
-            padding: 20px;
+            padding: 15px;
             position: relative;
         }
         
@@ -36,15 +36,15 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 0;
         }
         
         /* 头部样式 */
         header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             color: white;
-            padding: 25px;
+            padding: 20px 15px;
             background: rgba(0, 0, 0, 0.3);
             border-radius: 15px;
             backdrop-filter: blur(10px);
@@ -53,7 +53,7 @@
         }
         
         h1 {
-            font-size: clamp(1.8rem, 4vw, 2.5rem);
+            font-size: 1.8rem;
             margin-bottom: 10px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
             display: flex;
@@ -63,24 +63,25 @@
         }
         
         .subtitle {
-            font-size: clamp(0.9rem, 2vw, 1.1rem);
+            font-size: 0.95rem;
             opacity: 0.9;
             max-width: 700px;
             margin: 0 auto;
+            line-height: 1.5;
         }
         
         /* 计算器区域 */
         .calculator {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 30px;
+            padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-            margin-bottom: 30px;
+            margin-bottom: 20px;
         }
         
         .section-title {
-            font-size: clamp(1.5rem, 3vw, 1.8rem);
-            margin-bottom: 25px;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
             color: #1a2a6c;
             display: flex;
             align-items: center;
@@ -90,7 +91,7 @@
         }
         
         .form-group {
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
         
         label {
@@ -98,7 +99,7 @@
             margin-bottom: 8px;
             font-weight: 500;
             color: #444;
-            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-size: 1.05rem;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -109,7 +110,7 @@
             padding: 14px;
             border: 2px solid #ddd;
             border-radius: 10px;
-            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-size: 1.05rem;
             transition: all 0.3s;
             background: white;
         }
@@ -123,13 +124,13 @@
         .input-row {
             display: flex;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 15px;
             margin-bottom: 15px;
         }
         
         .input-box {
             flex: 1;
-            min-width: 250px;
+            min-width: 100%;
         }
         
         .reactor-info {
@@ -145,7 +146,7 @@
             justify-content: space-between;
             padding: 8px 0;
             border-bottom: 1px solid #bbdefb;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-size: 0.95rem;
         }
         
         .info-row:last-child {
@@ -166,11 +167,11 @@
         
         button {
             flex: 1;
-            min-width: 150px;
-            padding: 15px;
+            min-width: 100%;
+            padding: 16px;
             border: none;
             border-radius: 10px;
-            font-size: clamp(1rem, 2.5vw, 1.1rem);
+            font-size: 1.1rem;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s;
@@ -197,7 +198,7 @@
         
         /* 结果区域 */
         .result {
-            margin-top: 25px;
+            margin-top: 20px;
             padding: 20px;
             background: #e9f7fe;
             border-radius: 10px;
@@ -205,7 +206,7 @@
         }
         
         .result-title {
-            font-size: clamp(1.2rem, 2.5vw, 1.3rem);
+            font-size: 1.25rem;
             margin-bottom: 15px;
             color: #1a2a6c;
             display: flex;
@@ -214,15 +215,16 @@
         }
         
         .result-value {
-            font-size: clamp(1.5rem, 4vw, 1.8rem);
+            font-size: 1.7rem;
             font-weight: 700;
             color: #1a2a6c;
             text-align: center;
             margin: 15px 0;
+            word-break: break-word;
         }
         
         .result-details {
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-size: 0.95rem;
             color: #555;
             line-height: 1.6;
         }
@@ -231,12 +233,13 @@
         .info-panel {
             background: rgba(255, 255, 255, 0.95);
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 70px; /* 为安装按钮留出空间 */
         }
         
         .info-title {
-            font-size: clamp(1.5rem, 3vw, 1.8rem);
+            font-size: 1.5rem;
             margin-bottom: 20px;
             color: #1a2a6c;
             display: flex;
@@ -246,31 +249,32 @@
         
         .info-content {
             line-height: 1.7;
-            font-size: clamp(0.95rem, 2.5vw, 1.1rem);
+            font-size: 1rem;
         }
         
         .formula {
             background: #e8f5e9;
-            padding: 20px;
+            padding: 15px;
             border-radius: 10px;
-            margin: 20px 0;
+            margin: 15px 0;
             font-family: monospace;
-            font-size: clamp(1rem, 2.5vw, 1.2rem);
+            font-size: 1.05rem;
             text-align: center;
             overflow-x: auto;
         }
         
         .parameters {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-top: 15px;
         }
         
         .parameter {
             background: #f5f5f5;
-            padding: 15px;
+            padding: 12px;
             border-radius: 10px;
+            font-size: 0.95rem;
         }
         
         .parameter-title {
@@ -288,7 +292,7 @@
             border-radius: 10px;
             margin-top: 20px;
             border-left: 4px solid #ffc107;
-            font-size: clamp(0.9rem, 2.5vw, 1rem);
+            font-size: 0.95rem;
         }
         
         .note ul {
@@ -324,6 +328,7 @@
         #wechat-warning p {
             margin: 10px 0;
             font-size: 18px;
+            line-height: 1.6;
         }
         
         #open-browser-btn {
@@ -336,6 +341,7 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         
         .wechat-icon {
@@ -359,71 +365,80 @@
             cursor: pointer;
             z-index: 100;
             display: none;
+            font-weight: 600;
         }
         
-        /* 响应式调整 */
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            header, .calculator, .info-panel {
-                padding: 20px;
-            }
-            
-            .input-row {
-                gap: 15px;
-            }
-            
-            .input-box {
-                min-width: 100%;
-            }
+        /* 移动端优化 */
+        .mobile-hint {
+            background: #fff8e1;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 15px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        @media (max-width: 480px) {
-            .btn-group {
-                flex-direction: column;
+        /* 输入框优化 */
+        input[type="number"] {
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+        
+        /* 键盘弹出时调整布局 */
+        @media (max-height: 600px) {
+            header {
+                padding: 15px;
+                margin-bottom: 15px;
+            }
+            
+            .calculator, .info-panel {
+                padding: 15px;
+            }
+            
+            .section-title {
+                font-size: 1.3rem;
+                margin-bottom: 15px;
             }
             
             button {
-                width: 100%;
+                padding: 14px;
             }
         }
-    </style>
-    
-    <!-- 内嵌字体图标 -->
-    <style>
-        /* 使用Base64嵌入Font Awesome图标 */
-        .fas {
-            display: inline-block;
-            font-style: normal;
-            font-variant: normal;
-            text-rendering: auto;
-            line-height: 1;
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
+        
+        /* 响应式调整 */
+        @media (min-width: 480px) {
+            .input-box {
+                min-width: calc(50% - 10px);
+            }
+            
+            button {
+                min-width: calc(50% - 10px);
+            }
         }
         
-        .fa-flask:before { content: "\f0c3"; }
-        .fa-calculator:before { content: "\f1ec"; }
-        .fa-industry:before { content: "\f275"; }
-        .fa-weight:before { content: "\f496"; }
-        .fa-bolt:before { content: "\f0e7"; }
-        .fa-tachometer-alt:before { content: "\f3fd"; }
-        .fa-info-circle:before { content: "\f05a"; }
-        .fa-chart-line:before { content: "\f201"; }
-        .fa-redo:before { content: "\f01e"; }
-        .fa-symbol:before { content: "\f12b"; }
-    </style>
-    
-    <!-- 内嵌Font Awesome字体 -->
-    <style>
-        @font-face {
-            font-family: 'Font Awesome 5 Free';
-            font-style: normal;
-            font-weight: 900;
-            font-display: block;
-            src: url("data:application/font-woff2;charset=utf-8;base64,d09GMgABAAAAAA/gAAsAAAAAGWAAAA+SAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHEIGVgCDHAqEcIQFATYCJAMkCxQABCAFhG0HWhsNC1GUT06f7McxGJgG0wCioBw2jQ1o2zYgAAKIECP8//v7nn3v7X5f9qKZZJPNYpPMaFqkQaQkUqQkKkQk9L9fOjTQwPkYJkXK4z1Jm9R2/8+1dMqU9xWZJQ4QqZQyQpQoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6QoQ6Qo极简版本，只包含必要的图标 -->
+        @media (min-width: 768px) {
+            body {
+                padding: 20px;
+            }
+            
+            .container {
+                padding: 0;
+            }
+            
+            header, .calculator, .info-panel {
+                padding: 25px;
+            }
+            
+            .input-row {
+                gap: 20px;
+            }
+            
+            .mobile-hint {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -440,7 +455,9 @@
     </div>
 
     <!-- 添加到桌面按钮 -->
-    <button class="install-btn" id="install-btn">添加到桌面</button>
+    <button class="install-btn" id="install-btn">
+        <i class="fas">📱</i> 添加到桌面
+    </button>
 
     <div class="container">
         <header>
@@ -481,23 +498,23 @@
             
             <div class="form-group">
                 <label for="volume"><i class="fas">⚖️</i> 反应体积 (L)</label>
-                <input type="number" id="volume" placeholder="输入反应体积..." min="1" step="0.1">
+                <input type="number" id="volume" placeholder="输入反应体积..." min="1" step="0.1" inputmode="decimal">
             </div>
             
             <div class="input-row">
                 <div class="input-box">
                     <label for="pv"><i class="fas">⚡</i> 功率输入 P/V (W/m³)</label>
-                    <input type="number" id="pv" placeholder="输入P/V值...">
+                    <input type="number" id="pv" placeholder="输入P/V值..." inputmode="decimal">
                 </div>
                 <div class="input-box">
                     <label for="rpm"><i class="fas">📊</i> 搅拌转速 (RPM)</label>
-                    <input type="number" id="rpm" placeholder="输入转速值...">
+                    <input type="number" id="rpm" placeholder="输入转速值..." inputmode="decimal">
                 </div>
             </div>
             
-            <p style="color: #666; margin-bottom: 15px; font-style: italic;">
-                <i class="fas">ℹ️</i> 只需填写P/V或转速中的一个值，系统将计算另一个值
-            </p>
+            <div class="mobile-hint">
+                <i class="fas">📱</i> 提示：只需填写P/V或转速中的一个值，系统将计算另一个值
+            </div>
             
             <div class="btn-group">
                 <button class="btn-calculate" id="calculate">
@@ -682,6 +699,9 @@
             resultValue.textContent = result;
             resultDetails.textContent = details;
             resultValue.style.color = "#1a2a6c";
+            
+            // 滚动到结果位置
+            resultValue.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
         // 显示错误
@@ -689,6 +709,7 @@
             resultValue.textContent = "输入错误";
             resultDetails.textContent = message;
             resultValue.style.color = "#e53935";
+            resultValue.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         
         // 重置输入
@@ -736,13 +757,25 @@
         calculateBtn.addEventListener('click', calculate);
         resetBtn.addEventListener('click', resetInputs);
         
-        // 移动端优化：虚拟键盘弹出时调整布局
-        window.addEventListener('resize', function() {
-            if (window.innerHeight < 500) {
-                document.body.classList.add('keyboard-open');
-            } else {
-                document.body.classList.remove('keyboard-open');
-            }
+        // 移动端优化：输入框聚焦时滚动到视图
+        const inputFields = document.querySelectorAll('input, select');
+        inputFields.forEach(input => {
+            input.addEventListener('focus', function() {
+                setTimeout(() => {
+                    this.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 300);
+            });
+        });
+        
+        // 移动端优化：点击计算按钮时收起键盘
+        calculateBtn.addEventListener('click', function() {
+            document.activeElement.blur();
+        });
+        
+        // 移动端优化：表单提交处理
+        document.querySelector('.calculator').addEventListener('submit', function(e) {
+            e.preventDefault();
+            calculate();
         });
     </script>
 </body>

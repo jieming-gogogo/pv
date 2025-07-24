@@ -2,87 +2,150 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>生物反应器 P/V 计算器</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <title>生物反应器 & 细胞生长 综合计算器</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
   <style>
-    *{margin:0;padding:0;box-sizing:border-box;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
-    body{background:linear-gradient(135deg,#1a2a6c,#2a4ab4,#1a2a6c);background-size:400% 400%;animation:gradientBG 15s ease infinite;color:#333;min-height:100vh;padding:20px}
-    @keyframes gradientBG{0%{background-position:0 50%}50%{background-position:100% 50%}100%{background-position:0 50%}}
-    .container{max-width:800px;margin:0 auto;padding:20px}
-    header{text-align:center;margin-bottom:30px;color:white;padding:25px;background:rgba(0,0,0,.3);border-radius:15px;backdrop-filter:blur(10px)}
-    h1{font-size:clamp(1.8rem,4vw,2.5rem);margin-bottom:10px}
-    .calculator{background:rgba(255,255,255,.95);border-radius:15px;padding:30px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
-    label{display:block;margin:.6em 0 .2em;font-weight:600;color:#444;font-size:clamp(1rem,2.5vw,1.1rem)}
-    select,input{width:100%;padding:14px;border:2px solid #ddd;border-radius:10px;font-size:16px;background:white}
-    button{width:100%;max-width:480px;margin:.5em 0;padding:15px;border:none;border-radius:10px;font-weight:600;cursor:pointer}
-    .btn-calculate{background:linear-gradient(to right,#1a2a6c,#2a4ab4);color:white;font-size:clamp(1rem,2.5vw,1.1rem)}
-    .btn-reset{background:linear-gradient(to right,#b21f1f,#d9534f);color:white;font-size:clamp(1rem,2.5vw,1.1rem)}
-    .result{margin-top:25px;padding:20px;background:#e9f7fe;border-left:5px solid #1a2a6c;border-radius:10px;font-weight:700;color:#1a2a6c}
-    @media(max-width:480px){button{width:100%}}
+    body{margin:0;padding:20px;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;background:linear-gradient(135deg,#1a2a6c,#2a4ab4,#1a2a6c);background-size:400% 400%;animation:gradientBG 15s ease infinite;color:#333;min-height:100vh;display:flex;justify-content:center;align-items:flex-start}
+    .container{max-width:600px;width:100%}
+    .tabs{display:flex;margin-bottom:20px;border-radius:10px;overflow:hidden}
+    .tab{flex:1;padding:12px 0;text-align:center;font-weight:700;cursor:pointer;background:rgba(255,255,255,.2);color:#fff;transition:.3s}
+    .tab.active{background:#fff;color:#1a2a6c}
+    .panel{background:rgba(255,255,255,.95);border-radius:15px;padding:25px;box-shadow:0 10px 30px rgba(0,0,0,.3)}
+    .panel h2{margin-bottom:15px;font-size:1.4rem;color:#1a2a6c}
+    label{display:block;margin:.5em 0 .2em;font-weight:600}
+    input,select{width:100%;padding:12px;border:1px solid #ccc;border-radius:8px;font-size:16px;background:#fff}
+    button{width:100%;margin-top:10px;padding:14px;border:none;border-radius:8px;font-weight:600;cursor:pointer;background:#007bff;color:#fff;font-size:16px}
+    .result{margin-top:15px;padding:15px;border-left:5px solid #007bff;background:#e9f7fe;font-weight:700}
+    .hidden{display:none}
   </style>
 </head>
 <body>
-  <div class="container">
-    <header><h1>🧪 生物反应器 P/V 计算器</h1></header>
-
-    <div class="calculator">
-      <label>反应器类型
-        <select id="type">
-          <option value="">--请选择--</option>
-          <option value="GE-XDR500">GE-XDR500</option>
-          <option value="Hyclone-SUB100">Hyclone-SUB100</option>
-          <option value="Hyclone-SUB500">Hyclone-SUB500</option>
-          <option value="Sartorius-200">Sartorius-200</option>
-          <option value="Applikon-3L">Applikon-3L</option>
-          <option value="Applikon-15L">Applikon-15L</option>
-          <option value="Sartorius-50">Sartorius-50</option>
-          <option value="BBI-3L">BBI-3L</option>
-          <option value="GE-XDR50">GE-XDR50</option>
-          <option value="Sartorius-500">Sartorius-500</option>
-        </select>
-      </label>
-
-      <label>反应体积 (L)<input type="number" id="volume" placeholder="例如 100" min="1" step="0.1"></label>
-
-      <label>功率输入 P/V (W/m³)<input type="number" id="pv" placeholder="留空则计算"></label>
-      <label>搅拌转速 (RPM)<input type="number" id="rpm" placeholder="留空则计算"></label>
-
-      <button class="btn-calculate" onclick="calc()">📝 计算参数</button>
-      <button class="btn-reset" onclick="reset()">🔄 重置输入</button>
-
-      <div id="result" style="margin-top:20px;font-weight:700;color:#1a2a6c">等待计算...</div>
-    </div>
+<div class="container">
+  <!-- 顶部选项卡 -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('pv')">P/V 功率计算器</div>
+    <div class="tab" onclick="switchTab('cell')">细胞翻倍时间</div>
   </div>
 
-  <script>
-    const data = {"GE-XDR500":{ne:1.15,d:0.2667},"Hyclone-SUB100":{ne:2.1,d:0.146},"Hyclone-SUB500":{ne:2.1,d:0.251},"Sartorius-200":{ne:1.1,d:0.225},"Applikon-3L":{ne:1.5,d:0.045},"Applikon-15L":{ne:1.5,d:0.075},"Sartorius-50":{ne:1.4,d:0.143},"BBI-3L":{ne:0.7,d:0.052},"GE-XDR50":{ne:1.15,d:0.21},"Sartorius-500":{ne:1.3,d:0.31}};
-    const ρ = 1000;
+  <!-- P/V 计算器 -->
+  <div id="pv-panel" class="panel">
+    <h2>🧪 生物反应器 P/V 计算器</h2>
+    <label>反应器类型
+      <select id="pv-type">
+        <option value="">--请选择--</option>
+        <option value="GE-XDR500">GE-XDR500</option>
+        <option value="Hyclone-SUB100">Hyclone-SUB100</option>
+        <option value="Hyclone-SUB500">Hyclone-SUB500</option>
+        <option value="Sartorius-200">Sartorius-200</option>
+        <option value="Applikon-3L">Applikon-3L</option>
+        <option value="Applikon-15L">Applikon-15L</option>
+        <option value="Sartorius-50">Sartorius-50</option>
+        <option value="BBI-3L">BBI-3L</option>
+        <option value="GE-XDR50">GE-XDR50</option>
+        <option value="Sartorius-500">Sartorius-500</option>
+      </select>
+    </label>
+    <label>反应体积 (L)<input type="number" id="pv-vol" placeholder="如 100" min="1" step="0.1"></label>
+    <label>P/V (W/m³)<input type="number" id="pv-pv" placeholder="留空则计算"></label>
+    <label>转速 (RPM)<input type="number" id="pv-rpm" placeholder="留空则计算"></label>
+    <button onclick="calcPV()">计算参数</button>
+    <button onclick="resetPV()">重置</button>
+    <div id="pv-result" class="result">等待计算...</div>
+  </div>
 
-    function calc() {
-      const t = document.getElementById('type').value;
-      const V = parseFloat(document.getElementById('volume').value);
-      const pv = parseFloat(document.getElementById('pv').value);
-      const rpm = parseFloat(document.getElementById('rpm').value);
-      const res = document.getElementById('result');
-      if (!t || !V) { res.textContent = '请选择反应器并输入体积'; return; }
-      const {ne, d} = data[t], V_m3 = V / 1000;
-      if (pv && !rpm) {
-        const n = Math.pow(pv * V_m3 / (ne * ρ * Math.pow(d, 5)), 1/3), rpmCalc = n * 60;
-        document.getElementById('rpm').value = rpmCalc.toFixed(1);
-        res.textContent = `转速 ≈ ${rpmCalc.toFixed(1)} RPM`;
-      } else if (rpm && !pv) {
-        const n = rpm / 60, pvCalc = (ne * ρ * Math.pow(n, 3) * Math.pow(d, 5)) / V_m3;
-        document.getElementById('pv').value = pvCalc.toFixed(2);
-        res.textContent = `P/V ≈ ${pvCalc.toFixed(2)} W/m³`;
-      } else {
-        res.textContent = '请只填 P/V 或转速其一';
-      }
-    }
+  <!-- 细胞翻倍时间计算器 -->
+  <div id="cell-panel" class="panel hidden">
+    <h2>🧬 细胞翻倍时间计算器</h2>
+    <label>上次检测时间<input type="datetime-local" id="cell-t0"></label>
+    <label>上次细胞密度 (E6 cells/mL)<input type="number" id="cell-c0" placeholder="如 0.2"></label>
+    <label>当日检测时间<input type="datetime-local" id="cell-t1"></label>
+    <label>当日细胞密度 (E6 cells/mL)<input type="number" id="cell-c1" placeholder="如 1.5"></label>
+    <label>翻倍时间 (h)<input type="number" id="cell-dt" readonly></label>
+    <label>预期细胞密度 (E6 cells/mL)<input type="number" id="cell-c2" placeholder="留空则计算时间"></label>
+    <label>预期时间<input type="datetime-local" id="cell-t2"></label>
+    <button onclick="calcCell()">计算翻倍时间</button>
+    <button onclick="calcFutureCell()">计算预期值</button>
+    <div id="cell-result" class="result">等待计算...</div>
+  </div>
+</div>
 
-    function reset() {
-      [...document.querySelectorAll('#type,#volume,#pv,#rpm')].forEach(el => el.value = '');
-      document.getElementById('result').textContent = '等待计算...';
+<script>
+  /* ---------- 通用 ---------- */
+  const reactorData = {
+    "GE-XDR500":{ne:1.15,d:0.2667},"Hyclone-SUB100":{ne:2.1,d:0.146},"Hyclone-SUB500":{ne:2.1,d:0.251},
+    "Sartorius-200":{ne:1.1,d:0.225},"Applikon-3L":{ne:1.5,d:0.045},"Applikon-15L":{ne:1.5,d:0.075},
+    "Sartorius-50":{ne:1.4,d:0.143},"BBI-3L":{ne:0.7,d:0.052},"GE-XDR50":{ne:1.15,d:0.21},"Sartorius-500":{ne:1.3,d:0.31}
+  };
+  const ρ = 1000;
+
+  function switchTab(tab){
+    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.add('hidden'));
+    document.querySelector(`.tab[onclick*="${tab}"]`).classList.add('active');
+    document.getElementById(`${tab}-panel`).classList.remove('hidden');
+  }
+
+  /* ---------- PV ---------- */
+  function calcPV(){
+    const type=document.getElementById('pv-type').value;
+    const volume=parseFloat(document.getElementById('pv-vol').value);
+    const pv=parseFloat(document.getElementById('pv-pv').value);
+    const rpm=parseFloat(document.getElementById('pv-rpm').value);
+    if(!type||!volume){document.getElementById('pv-result').textContent='请选择反应器并输入体积';return}
+    const {ne,d}=reactorData[type],V_m3=volume/1000;
+    if(pv&&!rpm){
+      const n=Math.pow(pv*V_m3/(ne*ρ*Math.pow(d,5)),1/3),rpmCalc=n*60;
+      document.getElementById('pv-rpm').value=rpmCalc.toFixed(1);
+      document.getElementById('pv-result').textContent=`转速 ≈ ${rpmCalc.toFixed(1)} RPM`;
+    }else if(rpm&&!pv){
+      const n=rpm/60,pvCalc=(ne*ρ*Math.pow(n,3)*Math.pow(d,5))/V_m3;
+      document.getElementById('pv-pv').value=pvCalc.toFixed(2);
+      document.getElementById('pv-result').textContent=`P/V ≈ ${pvCalc.toFixed(2)} W/m³`;
+    }else{
+      document.getElementById('pv-result').textContent='请只填 P/V 或转速其一';
     }
-  </script>
+  }
+  function resetPV(){
+    ['pv-type','pv-vol','pv-pv','pv-rpm'].forEach(id=>document.getElementById(id).value='');
+    document.getElementById('pv-result').textContent='等待计算...';
+  }
+
+  /* ---------- Cell ---------- */
+  const toHour = ms => ms/3600000;
+  function calcCell(){
+    const t0=new Date(document.getElementById('cell-t0').value);
+    const t1=new Date(document.getElementById('cell-t1').value);
+    const c0=parseFloat(document.getElementById('cell-c0').value);
+    const c1=parseFloat(document.getElementById('cell-c1').value);
+    if(!t0||!t1||!c0||!c1||c0<=0||c1<=0){document.getElementById('cell-result').textContent='请填写完整正数数据';return}
+    const deltaH=toHour(t1-t0);
+    const dt=deltaH*Math.LN2/Math.log(c1/c0);
+    document.getElementById('cell-dt').value=dt.toFixed(2);
+    document.getElementById('cell-result').textContent=`翻倍时间 ≈ ${dt.toFixed(2)} 小时`;
+  }
+  function calcFutureCell(){
+    const dt=parseFloat(document.getElementById('cell-dt').value);
+    const c2Val=document.getElementById('cell-c2').value;
+    const t2Val=document.getElementById('cell-t2').value;
+    const c1=parseFloat(document.getElementById('cell-c1').value);
+    const t1=new Date(document.getElementById('cell-t1').value);
+    if(!dt||!c1||!t1){document.getElementById('cell-result').textContent='请先计算翻倍时间并填写基础数据';return}
+    if(c2Val!==''&&t2Val===''){
+      const cycles=Math.log(parseFloat(c2Val)/c1)/Math.LN2;
+      const futureMs=t1.getTime()+cycles*dt*3600000;
+      const futureDT=new Date(futureMs);
+      document.getElementById('cell-t2').value=futureDT.toISOString().slice(0,16);
+      document.getElementById('cell-result').textContent=`预期时间：${futureDT.toLocaleString()}`;
+    }else if(t2Val!==''&&c2Val===''){
+      const deltaH=toHour(new Date(t2Val)-t1);
+      const cycles=deltaH/dt;
+      const density=c1*Math.pow(2,cycles);
+      document.getElementById('cell-c2').value=density.toFixed(2);
+      document.getElementById('cell-result').textContent=`预期细胞密度：${density.toFixed(2)} E6 cells/mL`;
+    }else{
+      document.getElementById('cell-result').textContent='请只填“预期细胞密度”或“预期时间”其中之一';
+    }
+  }
+</script>
 </body>
 </html>
